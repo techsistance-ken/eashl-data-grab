@@ -1,8 +1,11 @@
 import fetch from 'node-fetch';
-import { values, forEach, modify, compose, reduce, map, toLower } from 'ramda';
+import { length, find, propEq, mergeAll, prop, values, forEach, modify, compose, reduce, map, toLower } from 'ramda';
+import { minimalMemberStats } from './transformers/members.js';
 // var admin = require("firebase-admin");
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import { Firestore } from '@google-cloud/firestore';
+import { getClubMembers, getClubStats, searchClubinNewGen } from './eashl-api/index.js'
+import inquirer from 'inquirer'
 
 
 const app = initializeApp(
@@ -113,8 +116,40 @@ const makeFetch = (searchTerm) => {
 //   res.send(`OK ${num}`);
 // });
 
+
+const nextStep = (platform,clubId) => {
+    return getClubMembers(platform)(clubId);
+}
+const nextStep2 = (platform,clubId) => {
+    return getClubStats(platform)(clubId);
+}
+
+const pickTeam = teams => {
+  console.table(teams)
+  if(length(teams) == 0) {console.log("No Teams Found"); return null}
+  else if(length(teams) == 1) return nextStep(teams[0].platform,teams[0].id);
+  else 
+  return inquirer
+  .prompt([
+    {
+      type: 'list',
+      name: 'club',
+      message: 'What club?',
+      choices: map(prop("clubName"))(teams)
+    },
+  ])
+  .then(answers => {
+    const c = find(propEq("clubName",answers.club))(teams);
+    return nextStep(c.platform,c.id);
+  })
+}
 const myArgs = process.argv.slice(2);
-makeFetch(myArgs[0])
+searchClubinNewGen(myArgs[0])
+  .then(pickTeam)
+  .then(x => x == null ? nextStep2(x.platform,x.id) : (console.table(mergeAll(map(minimalMemberStats)(x.members))), nextStep2(x.platform,x.id)))
+  .then(x => console.table(x))
+  .catch(console.log)
+
 
 // makeFetch(platform,clubId)
 
