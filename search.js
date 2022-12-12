@@ -4,7 +4,7 @@ import { minimalMemberStats } from './transformers/members.js';
 // var admin = require("firebase-admin");
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import { Firestore } from '@google-cloud/firestore';
-import { getClubMembers, getClubStats, searchClubinNewGen } from './eashl-api/index.js'
+import { fetchClubFinalsMatches, fetchSeasonsMatches, fetchClubMembers, fetchClubStats, searchClubinNewGen } from './eashl-api/index.js'
 import inquirer from 'inquirer'
 
 
@@ -118,10 +118,10 @@ const makeFetch = (searchTerm) => {
 
 
 const nextStep = (platform,clubId) => {
-    return getClubMembers(platform)(clubId);
+    return fetchClubMembers(platform)(clubId);
 }
 const nextStep2 = (platform,clubId) => {
-    return getClubStats(platform)(clubId);
+    return fetchClubStats(platform)(clubId);
 }
 
 const pickTeam = teams => {
@@ -146,8 +146,10 @@ const pickTeam = teams => {
 const myArgs = process.argv.slice(2);
 searchClubinNewGen(myArgs[0])
   .then(pickTeam)
-  .then(x => x == null ? nextStep2(x.platform,x.id) : (console.table(mergeAll(map(minimalMemberStats)(x.members))), nextStep2(x.platform,x.id)))
-  .then(x => console.table(x))
+  .then(x => x == null ? nextStep2(x.platform,x.id) : (console.table(map(minimalMemberStats)(x.members)), nextStep2(x.platform,x.id)))
+  .then(x => (console.table([x.stats]),fetchSeasonsMatches(x.platform)(x.id)))
+  .then(x => (console.table(map(y => y.matchStats)(x.matches)),fetchClubFinalsMatches(x.platform)(x.id)))
+  .then(x => console.table(map(y => y.matchStats)(x.matches)))
   .catch(console.log)
 
 

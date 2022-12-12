@@ -1,26 +1,22 @@
-import { assoc, prop } from "ramda";
+import { without, identity, map, keys, reduce, assoc, prop } from "ramda";
 
-const getSeasons = prop("seasons");
-const getCurrentDivision = prop("currentDivision");
-const getPromotions = prop("promotions");
-const getRelegations = prop("relegations");
-const getHolds = prop("holds");
-const getRecord = prop("record")
-const getTitles = prop("titlesWon");
-const getGoals = prop("goals");
-const getGoalsAgainst = prop("goalsAgainst");
+const dataConversion = {
+    "seasons": {f: "seasons", c: Number},
+    "currentDivision": {f: "currentDivision", c: Number},
+    "promotions": {f: "promotions", c: Number},
+    "relegations": {f: "relegations", c: Number},
+    "holds": {f: "holds", c: Number},
+    "record": {f: "record", c: identity},
+    "titlesWon": {f: "titles", c: Number},
+    "goals": {f: "goalsAgainst", c: Number},
+    "goalsAgainst": {f: "goalsAgainst", c: Number},
+}
+
+const conv = glass => fld => prop(fld)(glass) == null ? undefined : assoc("o",fld)(prop(fld)(glass))
 
 export const clubSeasonStats = statsArr => {
     const stats = statsArr[0];
-    return {
-        seasons: Number(getSeasons(stats)),
-        currentDivision: Number(getCurrentDivision(stats)),
-        promotions: Number(getPromotions(stats)),
-        relegations: Number(getRelegations(stats)),
-        holds: Number(getHolds(stats)),
-        record: getRecord(stats),
-        titles: Number(getTitles(stats)),
-        goals: Number(getGoals(stats)),
-        goalsAgainst: Number(getGoalsAgainst(stats)),
-    };
+    const flds = without([undefined],map(conv(dataConversion))(keys(stats)))
+    return reduce((acc,elem) => assoc(elem.f,elem.c(prop(elem.o)(stats)))(acc),{})(flds)
+
 }

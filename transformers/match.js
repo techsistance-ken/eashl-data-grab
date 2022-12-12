@@ -1,4 +1,5 @@
-import { keys, prop, cond, equals, always, T} from "ramda";
+import { map, path, values, keys, prop, cond, equals, always, T} from "ramda";
+import { matchPlayerStats } from "./matchplayers.js";
 
 const getShots = prop("shots");
 const getTeamSide = prop("teamSide");
@@ -8,10 +9,11 @@ const getTOA = prop("toa");
 const getGameType = prop("cNhlOnlineGameType")
 const getPassAttempts = prop("passa");
 const getPassCompletions = prop("passc");
+const getHits = prop("skhits");
 
 const convertResult = cond([
-	[equals(1), always("Loss")],
-	[equals(2), always("Win")],
+	[equals(1), always("Win")],
+	[equals(2), always("Loss")],
 	[equals(5), always("OT Win")],
 	[equals(6), always("OTL")],
 	[equals(10), always("DNF Loss")],
@@ -44,7 +46,7 @@ export const getPlayersSummary = clubId => matchData => {
 	const oClubStats = prop(oClubId)(clubStats);
 
 	const myAggStats = prop(clubId)(aggregateStats);
-	const oAggStats = prop(oClubId)
+	const oAggStats = prop(oClubId)(aggregateStats);
 
 	const passAttempts = getPassAttempts(myClubStats);
 	const passCompletions = getPassCompletions(myClubStats);
@@ -55,20 +57,28 @@ export const getPlayersSummary = clubId => matchData => {
     const oPassPct = getPassPct(oPassAttempts, oPassCompletions);	
 
 	return {
-		home: getTeamSide(myClubStats) == 0,
-		shots: Number(getShots(myClubStats)),
-		oshots: Number(getShots(oClubStats)),
-		goals: Number(getGoals(myClubStats)),
-		ogoals: Number(getGoals(oClubStats)),
-		toa: Number(getTOA(myClubStats)),
-		otoa: Number(getTOA(oClubStats)),
-		oId: oClubId,
-		result: Number(getResult(myClubStats)),
-		resultDesc: convertResult(Number(getResult(myClubStats))),
-		gameType: Number(getGameType(myClubStats)),
-		gameTypeDesc: convertGameType(Number(getGameType(myClubStats))),
-		passPct: passPct,
-		opassPct: oPassPct,
+
+		matchStats: {
+			home: getTeamSide(myClubStats) == 0,
+			shots: Number(getShots(myClubStats)),
+			oshots: Number(getShots(oClubStats)),
+			goals: Number(getGoals(myClubStats)),
+			ogoals: Number(getGoals(oClubStats)),
+			toa: Number(getTOA(myClubStats)),
+			otoa: Number(getTOA(oClubStats)),
+			oId: oClubId,
+			result: Number(getResult(myClubStats)),
+			resultDesc: convertResult(Number(getResult(myClubStats))),
+			gameType: Number(getGameType(myClubStats)),
+			gameTypeDesc: convertGameType(Number(getGameType(myClubStats))),
+			hits: Number(getHits(myAggStats)),
+			ohits: Number(getHits(oAggStats)),
+			passPct: passPct,
+			opassPct: oPassPct,
+			timestamp: prop("timestamp")(matchData)
+		},
+		playerStats: map(matchPlayerStats)(values(path(["players",clubId])(matchData)))
+
 	}
 }
 
