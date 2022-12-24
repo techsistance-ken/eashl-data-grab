@@ -23,8 +23,10 @@ const convertResult = cond([
 )
 
 const convertGameType = cond([
-	[equals(206), always("Club Finals")],
-	[equals(200), always("Online Season")],
+	[equals(206), always("3s Club Finals")],
+	[equals(200), always("3s Online Season")],
+	[equals(10), always("6s Club Finals")],
+	[equals(5), always("6s Online Season")],
 	[T, val => `Unknown "${val}"`]
 ]
 )
@@ -37,6 +39,7 @@ const getPassPct = (total, completed) => total == 0 ? "0%" : `${100*roundToTwo(c
 
 export const getPlayersSummary = clubId => matchData => {
 	const clubStats = prop("clubs")(matchData);
+	const matchId = prop("matchId")(matchData);
 	const aggregateStats = prop("aggregate")(matchData);
 
 	const clubs = keys(clubStats)
@@ -75,6 +78,7 @@ export const getPlayersSummary = clubId => matchData => {
 			ohits: Number(getHits(oAggStats)),
 			passPct: passPct,
 			opassPct: oPassPct,
+			matchId: matchId,
 			timestamp: prop("timestamp")(matchData)
 		},
 		playerStats: map(matchPlayerStats)(values(path(["players",clubId])(matchData)))

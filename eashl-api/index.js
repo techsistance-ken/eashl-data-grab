@@ -5,6 +5,7 @@ import { clubSeasonStats } from "../transformers/clubstats.js"
 import { getPlayersSummary } from "../transformers/match.js"
 import { clubInfo } from "../transformers/clubinfo.js"
 import { modifyListOfFields } from "../utils/modifiers/modifymultiple.js"
+import { playerInfo } from "../transformers/playerInfo.js"
 
 const baseUrl = "https://proclubs.ea.com/api/nhl/"
 
@@ -17,6 +18,9 @@ const headers = {
     "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
   }
 
+  const parsePlayerInfo = (playerId, platform) => statsRaw => {
+     return playerInfo(playerId)(JSON.parse(statsRaw));
+  }
   const parseInfo = (clubId, platform) => statsRaw => {
     const stats = 
     compose(
@@ -66,6 +70,13 @@ const headers = {
     return clubSeasonStats(stats)
   }
 
+
+export const fetchPlayerInfo = platform => playerId => {
+  return fetch(`https://proclubs.ea.com/api/nhl/members/search?platform=${platform}&memberName=${playerId}`,{headers: headers})
+  .then(x => x.text())
+  .then(x => ({ platform, id: playerId, info: parsePlayerInfo(playerId,platform)(x), success: true}))
+  .catch(e => console.log(e))
+}
 
 export const fetchClubInfo = platform => clubId => {
   return fetch(`https://proclubs.ea.com/api/nhl/clubs/info?platform=${platform}&clubIds=${clubId}`,{headers: headers})
