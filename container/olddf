@@ -1,0 +1,48 @@
+# Set the base image to Ubuntu
+FROM debian:bullseye-slim
+
+ENV KEYRING=/usr/share/keyrings/nodesource.gpg
+
+RUN apt-get update
+RUN apt-get -y install \
+    curl \
+    gpg \
+    lsb-release \
+    apt-transport-https \
+    ca-certificates \
+    gnupg
+
+# Install NODE 18
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee "$KEYRING" >/dev/null
+
+ENV VERSION=node_18.x 
+ENV DISTRO=bullseye
+
+
+RUN echo "deb [signed-by=$KEYRING] https://deb.nodesource.com/$VERSION $DISTRO main" | tee /etc/apt/sources.list.d/nodesource.list \
+    echo "deb-src [signed-by=$KEYRING] https://deb.nodesource.com/$VERSION $DISTRO main" | tee -a /etc/apt/sources.list.d/nodesource.list
+
+RUN apt-get update && apt-get upgrade 
+RUN apt-get -y install \
+                nodejs \
+                jq 
+
+
+# Install GCloud SDK
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list 
+RUN apt-get update 
+RUN apt-get install google-cloud-cli
+
+COPY dist eashl/
+# RUN ls -la /eashl/*
+
+WORKDIR /eashl/
+RUN npm install
+EXPOSE 8080
+
+#ENTRYPOINT ["npm","start"]
+
+#docker push us-central1-docker.pkg.dev/eashl-db46/eashl/eashl-data-grab
+#docker tag eashl-data-grab us-central1-docker.pkg.dev/eashl-db46/eashl/eashl-data-grab
+#docker build . -t eashl-data-grab --platform linux/amd64
