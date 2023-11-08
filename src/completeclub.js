@@ -142,16 +142,20 @@ const writeJson = json => fs.writeFile("club.json",json,err => {
 })
 
 
-Promise.all([
-    new Promise(res => res({clubInfo: 1, clubStats: 2, seasonMatches: 3, finalsMatches: 4, clubMembers: 5})),
-    fetchClubInfo(platform)(clubId),
-    fetchClubStats(platform)(clubId),
-    fetchSeasonsMatches(commonPlatform(platform))(clubId),
-    fetchClubFinalsMatches(commonPlatform(platform))(clubId),
-    fetchClubMembers(platform)(clubId)
-])
-.then(buildInitialGrabs)
-.then(buildInitialPlusMatches)
-.then(saveAll)
-//.then(x => writeJson(JSON.stringify(x)))
-.catch(e => console.log("err",e))
+export const runCompleteClub = (platform,clubId) => {
+    return Promise.all([
+        new Promise(res => res({clubInfo: 1, clubStats: 2, seasonMatches: 3, finalsMatches: 4, clubMembers: 5})),
+        fetchClubInfo(platform)(clubId),
+        fetchClubStats(platform)(clubId),
+        fetchSeasonsMatches(commonPlatform(platform))(clubId),
+        fetchClubFinalsMatches(commonPlatform(platform))(clubId),
+        fetchClubMembers(platform)(clubId)
+    ])
+    .then(buildInitialGrabs)
+    .then(buildInitialPlusMatches)
+    .then(saveAll)
+    //.then(x => writeJson(JSON.stringify(x)))
+    .catch(e => console.log("err",e))
+}
+
+// runCompleteClub(platform,clubId);

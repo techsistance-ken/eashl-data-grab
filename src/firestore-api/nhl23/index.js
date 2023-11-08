@@ -1,5 +1,6 @@
 import { initializeApp, cert } from 'firebase-admin/app';
-import { Firestore, Timestamp } from '@google-cloud/firestore';
+// import { Firestore, Timestamp, getFirestore } from '@google-cloud/firestore';
+import { getFirestore } from "firebase-admin/firestore";
 import { compose, map, tap, assoc, toLower, mergeAll, prop } from 'ramda';
 
 const jsonFileEncoded = process.env.FIREBASE_ENC;
@@ -9,6 +10,7 @@ let jsonFileDecoded = JSON.parse(bufferObj.toString("utf8"));
 
 const app = initializeApp(
   {
+    // projectId: prop("project_id")(jsonFileDecoded),
     credential: cert({
         projectId: prop("project_id")(jsonFileDecoded),
         privateKey: prop("private_key")(jsonFileDecoded),
@@ -19,7 +21,8 @@ const app = initializeApp(
 );
 
 // Create a new client
-export const firestore = new Firestore();
+// export const firestore = new Firestore();
+export const firestore = getFirestore(app);
 
 
 const nhlColl = firestore.collection("nhl24");
