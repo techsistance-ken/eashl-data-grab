@@ -8,7 +8,11 @@ let bufferObj = Buffer.from(jsonFileEncoded, "base64");
 // Encode the Buffer as a base64 string 
 let jsonFileDecoded = JSON.parse(bufferObj.toString("utf8"));
 
-
+console.log({
+    projectId: prop("project_id")(jsonFileDecoded),
+    privateKey: prop("private_key")(jsonFileDecoded).length,
+    clientEmail: prop("client_email")(jsonFileDecoded)
+})
 const app = initializeApp(
   {
     // projectId: prop("project_id")(jsonFileDecoded),
