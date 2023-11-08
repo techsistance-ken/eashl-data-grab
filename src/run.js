@@ -1,10 +1,13 @@
 import express from "express"
+import cors from "cors"
+
 
 import { prop, always, any, includes, ifElse, isNil, length,path, not  } from "ramda";
 import { fetchClubMembers, fetchClubStats, searchClub, fetchSeasonsMatches, fetchClubFinalsMatches, fetchClubInfo} from "./eashl-api/index.js";
 
 const app = express();
 
+app.use(cors);
 app.use(express.json());
 
 app.get('/', (req, res) => {
