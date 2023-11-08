@@ -14,7 +14,7 @@ console.log({
 })
 const app = initializeApp(
   {
-    // projectId: prop("project_id")(jsonFileDecoded),
+    projectId: prop("project_id")(jsonFileDecoded),
     credential: cert({
         projectId: prop("project_id")(jsonFileDecoded),
         privateKey: prop("private_key")(jsonFileDecoded),
