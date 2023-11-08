@@ -7,17 +7,8 @@ import { fetchClubMembers, fetchClubStats, searchClub, fetchSeasonsMatches, fetc
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
-
-// Add a list of allowed origins.
-// If you have more origins you would like to add, you can add them to the array below.
-const allowedOrigins = ['*'];
-
-const options = cors.CorsOptions = {
-  origin: allowedOrigins
-};
-
-app.use(cors(options));
 
 app.get('/', (req, res) => {
     const name = process.env.NAME || 'World';
