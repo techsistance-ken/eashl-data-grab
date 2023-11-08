@@ -1,5 +1,4 @@
 import { initializeApp, cert } from 'firebase-admin/app';
-// import { Firestore, Timestamp, getFirestore } from '@google-cloud/firestore';
 import { getFirestore } from "firebase-admin/firestore";
 import { compose, map, tap, assoc, toLower, mergeAll, prop } from 'ramda';
 

@@ -3,7 +3,6 @@ import { length, find, propEq, mergeAll, prop, values, forEach, modify, compose,
 import { minimalMemberStats } from './transformers/members.js';
 // var admin = require("firebase-admin");
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
-import { Firestore } from '@google-cloud/firestore';
 import { fetchClubFinalsMatches, fetchSeasonsMatches, fetchClubMembers, fetchClubStats, searchClubinNewGen } from './eashl-api/index.js'
 import inquirer from 'inquirer'
 

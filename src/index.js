@@ -1,6 +1,5 @@
 import { modify, compose, map, reduce, forEach, toLower } from 'ramda';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
-import { Firestore } from '@google-cloud/firestore';
 import fetch from "node-fetch";
 
 const app = initializeApp(
