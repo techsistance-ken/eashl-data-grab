@@ -10,10 +10,10 @@ const app = initializeApp(
   }
 );
 
-const collection = "nhl23"
+const collection = "nhl24"
 const stat_collection = "player-stats";
 const playerClub = "playerclub"
-const clubId = "13156"
+const clubId = "1620"
 const platform = "common-gen5"
 
 

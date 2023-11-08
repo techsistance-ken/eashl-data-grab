@@ -15,7 +15,7 @@ const app = initializeApp(
 export const firestore = new Firestore();
 
 
-const nhlColl = firestore.collection("nhl23");
+const nhlColl = firestore.collection("nhl24");
 
 const platformDoc = platform => nhlColl.doc(platform)
 const nhlPs5Doc = platformDoc("ps5");
@@ -58,7 +58,7 @@ const setPlayerHistory = matchType => (platform, clubId) => matchId => player =>
 const addMatchInfoToPlayerStats = (platform,clubId,matchType) => matchStats => compose(
         assoc("timestamp", matchStats.timestamp),
         assoc("result", matchStats.resultDesc),
-        assoc("matchPath",`nhl23/${platform}/clubs/${clubId}/${matchType}/${matchStats.matchId}`),
+        assoc("matchPath",`nhl24/${platform}/clubs/${clubId}/${matchType}/${matchStats.matchId}`),
         assoc("score",`${matchStats.goals}-${matchStats.ogoals}`),
         assoc("oName",matchStats.oName),
 );

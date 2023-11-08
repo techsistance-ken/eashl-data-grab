@@ -119,6 +119,7 @@ const fetchClubMatches = gameType => platform => clubId => {
   .catch(e => ({platform, id: clubId, matches: null, error: e}))
 }
 
+
 export const fetchClubFinalsMatches = fetchClubMatches("gameType10")
 export const fetchSeasonsMatches = fetchClubMatches("gameType5")
 

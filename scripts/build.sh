@@ -1,4 +1,5 @@
-exclude_folders=(../container/ ../node_modules/ ../dist/ ../scripts/ ../archives/ ../db-scripts/)
+# Run From Where?
+exclude_folders=(../container/ ../src/node_modules/ ../dist/ ../scripts/ ../archives/ ../db-scripts/)
 echo ${exclude_folders[*]}
 
 remove_dist () {
@@ -12,11 +13,11 @@ remove_dist () {
 
 mkdir ../container/dist
 
-cp ../*.js ../container/dist
+cp ../src/*.js ../container/dist
 cp ../auth-and-run.sh ../container/dist/auth-and-run.sh
-cp ../package.json ../container/dist/package.json
+cp ../src/package.json ../container/dist/package.json
 
-subdirs=$(echo ../*/)
+subdirs=$(echo ../src/*/)
 
 for subdir in $subdirs
 do

@@ -57,6 +57,8 @@ const buildInitialGrabs = data => {
         map(x => fetchPlayerInfo(clientToPlatform(x.clientPlatform))(x.name))(dataClubMembers.members),
         map(x => fetchClubInfo(dataSeasonMatches.platform)(x.matchStats.oId))(dataSeasonMatches.matches),
         map(x => fetchClubInfo(dataFinalsMatches.platform)(x.matchStats.oId))(dataFinalsMatches.matches),
+        map(x => fetchClubStats(dataSeasonMatches.platform)(x.matchStats.oId))(dataSeasonMatches.matches),
+        map(x => fetchClubStats(dataFinalsMatches.platform)(x.matchStats.oId))(dataFinalsMatches.matches),
     ]))
 }
 
@@ -73,17 +75,22 @@ const buildInitialPlusMatches = data => {
     const dataFinalsMatches = originalData[firstndx.finalsMatches];
     const dataClubMembers = originalData[firstndx.clubMembers];
 
+
     const memberArrayStart = secondNdx.arrayStart;
     const memberLength = data[secondNdx.memberLength];
     const seasonMatchesLength = data[secondNdx.seasonMatchesLength];
     const finalsMatchesLength = data[secondNdx.finalsMatchesLength];
     const seasonMatchStart = memberArrayStart + memberLength;
     const finalsMatchStart = seasonMatchStart + seasonMatchesLength;
+    const seasonStatsStart = finalsMatchStart + finalsMatchesLength;
+    const finalStatsStart = seasonStatsStart + seasonMatchesLength;
 
 
     const memberPlayerInfoArray = slice(memberArrayStart,memberArrayStart+memberLength)(data)
     const seasonMatchesArray = slice(seasonMatchStart,seasonMatchStart+seasonMatchesLength)(data)
     const finalsMatchesArray = slice(finalsMatchStart,finalsMatchStart+finalsMatchesLength)(data)
+    const seasonStatsArray = slice(seasonStatsStart,seasonStatsStart+seasonMatchesLength)(data)
+    const finalsStatsArray = slice(finalStatsStart,finalStatsStart+finalsMatchesLength)(data)
 
     const clubMemberList = dataClubMembers.members;
     const findById = name => find(propEq("id",name))
@@ -96,7 +103,10 @@ const buildInitialPlusMatches = data => {
     )
 
     const updateMatchStatsWithClubName = clubName => compose(
-        assocPath(["matchStats","oName"],clubName.info.name)
+        assocPath(["matchStats","oName"],clubName.info.name),
+    )
+    const updateMatchStatsWithClubRecord = clubRecord => compose(
+        assocPath(["matchStats","oRecord"],clubRecord.stats.record),
     )
 
     // x is one of the clubs members.
@@ -104,13 +114,15 @@ const buildInitialPlusMatches = data => {
     const newMemberData = map(x =>  updatePlayerInfo(findById(x.name)(memberPlayerInfoArray))(x))(dataClubMembers.members);
     // loop through all matches, 
     // look at matchStats.oId
-    const newSeasonData = map(x => updateMatchStatsWithClubName(findById(x.matchStats.oId)(seasonMatchesArray))(x))(dataSeasonMatches.matches);
-    const newFinalsData = map(x => updateMatchStatsWithClubName(findById(x.matchStats.oId)(finalsMatchesArray))(x))(dataFinalsMatches.matches);
+    const newSeasonData1 = map(x => updateMatchStatsWithClubName(findById(x.matchStats.oId)(seasonMatchesArray))(x))(dataSeasonMatches.matches);
+    const newFinalsData1 = map(x => updateMatchStatsWithClubName(findById(x.matchStats.oId)(finalsMatchesArray))(x))(dataFinalsMatches.matches);
+    const newSeasonData = map(x => updateMatchStatsWithClubRecord(findById(x.matchStats.oId)(seasonStatsArray))(x))(newSeasonData1);
+    const newFinalsData = map(x => updateMatchStatsWithClubRecord(findById(x.matchStats.oId)(finalsStatsArray))(x))(newFinalsData1);
 
 
     const clubBasePlatform = dataClubMembers.members[0].clientPlatform;
 
-    return {
+    const returnData = {
        myClubInfo: dataClubInfo,
        myClubStats: dataClubStats.stats,
        myClubMembers: newMemberData,
@@ -118,6 +130,9 @@ const buildInitialPlusMatches = data => {
        finalsMatches: newFinalsData,
        basePlatform: clubBasePlatform
     }
+
+    console.log(returnData.seasonMatches[0].matchStats)
+    return returnData
     
 }
 
