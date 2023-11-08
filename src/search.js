@@ -2,15 +2,23 @@ import fetch from 'node-fetch';
 import { length, find, propEq, mergeAll, prop, values, forEach, modify, compose, reduce, map, toLower } from 'ramda';
 import { minimalMemberStats } from './transformers/members.js';
 // var admin = require("firebase-admin");
-import { initializeApp, applicationDefault } from 'firebase-admin/app';
+import { initializeApp, cert} from 'firebase-admin/app';
 import { Firestore } from '@google-cloud/firestore';
 import { fetchClubFinalsMatches, fetchSeasonsMatches, fetchClubMembers, fetchClubStats, searchClubinNewGen } from './eashl-api/index.js'
 import inquirer from 'inquirer'
 
 
+const jsonFileEncoded = process.env.FIREBASE_ENC;
+let bufferObj = Buffer.from(jsonFileEncoded, "base64");
+// Encode the Buffer as a base64 string 
+let jsonFileDecoded = JSON.parse(bufferObj.toString("utf8"));
+
+
 const app = initializeApp(
   {
-    credential: applicationDefault(),
+    credential: cert({
+
+    }),
     // databaseURL: "https://kjs-sports-gaming.firebaseio.com"
   }
 );
