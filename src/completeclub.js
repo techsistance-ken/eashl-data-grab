@@ -120,7 +120,8 @@ const buildInitialPlusMatches = data => {
     const newFinalsData = map(x => updateMatchStatsWithClubRecord(findById(x.matchStats.oId)(finalsStatsArray))(x))(newFinalsData1);
 
 
-    const clubBasePlatform = dataClubMembers.members[0].clientPlatform;
+    // console.log(dataClubInfo)
+    const clubBasePlatform = dataClubInfo.platform
 
     const returnData = {
        myClubInfo: dataClubInfo,
