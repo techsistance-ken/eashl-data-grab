@@ -69,7 +69,7 @@ app.get('/', (req, res) => {
   
   })
 
-  app.post("/clubInfo", (req,res) => {
+  app.post("/clubinfo", (req,res) => {
     const clubId = prop("clubId",req.body);
     const platform = prop("platform",req.body);
   
