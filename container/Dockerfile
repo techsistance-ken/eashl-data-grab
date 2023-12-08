@@ -1,8 +1,4 @@
-FROM alpine:latest
-
-# Install NodeJS and npm
-RUN apk update
-RUN apk add --no-cache nodejs npm
+FROM node:18-alpine
 
 COPY dist eashl/
 # RUN ls -la /eashl/*
