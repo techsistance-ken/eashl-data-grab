@@ -69,23 +69,23 @@ app.get('/', (req, res) => {
   
   })
 
-  // app.post("/clubinfo", (req,res) => {
-  //   const clubId = prop("clubId",req.body);
-  //   const platform = prop("platform",req.body);
+  app.post("/clubinfo", (req,res) => {
+    const clubId = prop("clubId",req.body);
+    const platform = prop("platform",req.body);
   
-  //   const {platformSuccess, clubIdSuccess}= checkPlatformAndClubId(platform, clubId)
+    const {platformSuccess, clubIdSuccess}= checkPlatformAndClubId(platform, clubId)
     
-  //   if(any(x=>x.s==false)([clubIdSuccess,platformSuccess])) {
-  //     res.status(400);
-  //     res.send(`Required clubId: ${clubIdSuccess.s ? "OK" : clubIdSuccess.m}, Required Platform: ${platformSuccess.s ? "OK" : platformSuccess.m}`)
-  //     return;
-  //   }
+    if(any(x=>x.s==false)([clubIdSuccess,platformSuccess])) {
+      res.status(400);
+      res.send(`Required clubId: ${clubIdSuccess.s ? "OK" : clubIdSuccess.m}, Required Platform: ${platformSuccess.s ? "OK" : platformSuccess.m}`)
+      return;
+    }
 
-  //   fetchClubInfo(platform)(clubId)
-  //     .then(x => res.send(x))
-  //     .catch(x => res.status(400).send(""))
+    fetchClubInfo(platform)(clubId)
+      .then(x => res.send(x))
+      .catch(x => res.status(400).send(""))
 
-  // })
+  })
 
   app.post("/club", (req, res) => {
 
