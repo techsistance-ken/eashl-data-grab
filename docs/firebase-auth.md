@@ -1,0 +1,1 @@
+You need to encode the firebase service account `.json` file and set it as an environment variable called `FAREBASE_ENC`
